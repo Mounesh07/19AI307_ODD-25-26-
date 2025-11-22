@@ -1,23 +1,49 @@
-# Ex.No:3(b) POLYMORPHISM
+# Ex.No:3(A) INHERITANCE AND AGGREGATION
 
 ## QUESTION:
-Write a Java program to create a class Vehicle with a method called speedUp(). Create two subclasses Car and Bicycle. Override the speedUp() method in each subclass to increase the vehicle's speed differently.
+A jewelry store tracks gold rates for different types of customers. The base class is Customer with attributes like customerId, name, and purchaseWeight (in grams). There are two types of customers: RegularCustomer and PremiumCustomer. RegularCustomer gets a fixed discount of 2% on the gold rate per gram. PremiumCustomer gets a 5% discount plus a special cashback. The base gold rate per gram is input at runtime. For each customer, calculate the final price they pay:
+
+       
+       
+      finalPrice = purchaseWeight * (goldRatePerGram - discount)
+
+
+For PremiumCustomer, additionally show cashback amount (which is 1% of the final price).
 
 ## AIM:
-To create a Java program demonstrating method overriding by defining a base class Vehicle with a speedUp() method and overriding it in subclasses Car and Bicycle to increase speed differently.
+To build an inheritance-based Java program that calculates the final price of gold for different types of customers (Regular and Premium), applying respective discounts and showing cashback for premium customers.
 
 ## ALGORITHM :
-1. Create a parent class Vehicle with an integer variable speed and a method speedUp(int increment) that increases speed normally.
+1. Create a base class Customer with attributes: customerId, name, purchaseWeight, and goldRatePerGram.
 
-2. Create a subclass Car that overrides speedUp() to increase speed by double the increment.
+2. Create method getDiscountRate() in base class returning 0 (default).
 
-3. Create a subclass Bicycle that overrides speedUp() to increase speed normally (same as parent but customized message).
+3. Create method calculateFinalPrice() that:
 
-4. Read vehicle type and increment value from user.
+        calculates discount per gram → discountAmount = goldRatePerGram * (discountRate/100)
 
-5. Based on the type, create an object of Car, Bicycle, or Vehicle.
+        calculates effective rate → effectiveRate = goldRatePerGram - discountAmount
 
-6. Call the speedUp(increment) method to show polymorphic behavior.
+  returns → finalPrice = purchaseWeight * effectiveRate
+
+4. Override display() in base class to show general customer details.
+
+5. Create child class RegularCustomer:
+
+       Override getDiscountRate() to return 2%.
+
+       Override display() to show customer type as Regular.
+
+6. Create child class PremiumCustomer:
+
+       Override getDiscountRate() to return 5%.
+
+7.  Add calculateCashback() → returns 1% of final price.
+
+8.  Override display() to show final price + cashback.
+
+9.  Call display() to show the complete bill with discounts.
+
 
 
 
@@ -25,7 +51,7 @@ To create a Java program demonstrating method overriding by defining a base clas
 ## PROGRAM:
  ```
 /*
-Program to implement a Polymorphism using Java
+Program to implement a Inheritance and Aggregation using Java
 Developed by: MOUNESH P
 Register Number:212222230084
 */
@@ -34,52 +60,115 @@ Register Number:212222230084
 ## SOURCE CODE:
 ```
 import java.util.Scanner;
+import java.text.DecimalFormat;
 
-// Parent class
-class Vehicle {
-    int speed = 0;
+class Customer {
+    String customerId, name;
+    double purchaseWeight, goldRatePerGram;
 
-    void speedUp(int increment) {
-        speed += increment;
-        System.out.println("Vehicle speed increased to: " + speed + " km/h");
+    Customer(String customerId, String name, double purchaseWeight, double goldRatePerGram) {
+        this.customerId = customerId;
+        this.name = name;
+        this.purchaseWeight = purchaseWeight;
+        this.goldRatePerGram = goldRatePerGram;
+    }
+
+    double getDiscountRate() {
+        return 0;
+    }
+
+    double calculateFinalPrice() {
+        double discountAmount = goldRatePerGram * getDiscountRate() / 100;
+        double effectiveRate = goldRatePerGram - discountAmount;
+        return purchaseWeight * effectiveRate;
+    }
+
+    void display() {
+        DecimalFormat df = new DecimalFormat("0.00");
+        System.out.println("Customer ID: " + customerId);
+        System.out.println("Name: " + name);
+        System.out.println("Customer Type: General");
+        System.out.println("Purchase Weight: " + purchaseWeight + " grams");
+        System.out.println("Gold Rate per Gram: " + goldRatePerGram);
+        System.out.println("Discount: " + getDiscountRate() + "%");
+        System.out.println("Final Price: " + df.format(calculateFinalPrice()));
+        
     }
 }
 
+class RegularCustomer extends Customer {
 
-class Car extends Vehicle {
+    RegularCustomer(String customerId, String name, double purchaseWeight, double goldRatePerGram) {
+        super(customerId, name, purchaseWeight, goldRatePerGram);
+    }
+
     @Override
-    void speedUp(int increment) {
-        speed += increment * 2;
-        System.out.println("Car speed increased to: " + speed + " km/h");
+    double getDiscountRate() {
+        return 2.0;
     }
-}
 
-
-class Bicycle extends Vehicle {
     @Override
-    void speedUp(int increment) {
-        speed += increment;
-        System.out.println("Bicycle speed increased to: " + speed + " km/h");
+    void display() {
+        DecimalFormat df = new DecimalFormat("0.00");
+        System.out.println("Customer ID: " + customerId);
+        System.out.println("Name: " + name);
+        System.out.println("Customer Type: Regular");
+        System.out.println("Purchase Weight: " + purchaseWeight + " grams");
+        System.out.println("Gold Rate per Gram: " + goldRatePerGram);
+        System.out.println("Discount: 2%");
+        System.out.println("Final Price: " + df.format(calculateFinalPrice()));
+       
     }
 }
 
+class PremiumCustomer extends Customer {
 
-public class TestVehicles {
+    PremiumCustomer(String customerId, String name, double purchaseWeight, double goldRatePerGram) {
+        super(customerId, name, purchaseWeight, goldRatePerGram);
+    }
+
+    @Override
+    double getDiscountRate() {
+        return 5.0;
+    }
+
+    double calculateCashback() {
+        return calculateFinalPrice() * 0.01;
+    }
+
+    @Override
+    void display() {
+        DecimalFormat df = new DecimalFormat("0.00");
+        System.out.println("Customer ID: " + customerId);
+        System.out.println("Name: " + name);
+        System.out.println("Customer Type: Premium");
+        System.out.println("Purchase Weight: " + purchaseWeight + " grams");
+        System.out.println("Gold Rate per Gram: " + goldRatePerGram);
+        System.out.println("Discount: 5%");
+        System.out.println("Final Price: " + df.format(calculateFinalPrice()));
+        System.out.println("Cashback: " + df.format(calculateCashback()));
+        
+    }
+}
+
+public class GoldRateSystem {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String type = sc.nextLine().toLowerCase();
-        int increment = sc.nextInt();
 
-        Vehicle vehicle;
-        if (type.equals("car")) {
-            vehicle = new Car();
-        } else if (type.equals("bicycle")) {
-            vehicle = new Bicycle();
+        // Input 1
+        String type1 = sc.next();
+        Customer cust1;
+        if (type1.equalsIgnoreCase("Regular")) {
+            cust1 = new RegularCustomer(sc.next(), sc.next(), sc.nextDouble(), sc.nextDouble());
         } else {
-            vehicle = new Vehicle();
+            cust1 = new PremiumCustomer(sc.next(), sc.next(), sc.nextDouble(), sc.nextDouble());
         }
 
-        vehicle.speedUp(increment);
+        
+        cust1.display();
+     
+
+        sc.close();
     }
 }
 ```
@@ -87,15 +176,13 @@ public class TestVehicles {
 
 
 
-
-
 ## OUTPUT:
-<img width="921" height="437" alt="image" src="https://github.com/user-attachments/assets/5c317382-efe2-4ec9-a2cf-67b2d4db68b4" />
+<img width="884" height="700" alt="image" src="https://github.com/user-attachments/assets/bc4bc233-2418-404a-88cc-490c1d83bc24" />
 
 
 
 ## RESULT:
-Therefore the  program successfully demonstrates method overriding by applying different speed increase behaviors for car and bicycle.
+Therefore the program successfully applies different discount rules for regular and premium customers.
 
 
 
